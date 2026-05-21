@@ -1,8 +1,185 @@
 import { useState, useEffect } from 'react'
 import {
   Cloud, GitBranch, Shield, Terminal, Server, Activity,
-  Mail, ChevronDown, Layers, Lock, Globe, Zap,
+  Mail, ChevronDown, Layers, Lock, Globe, Zap, Database, Award,
 } from 'lucide-react'
+
+const NAV_LINKS = [
+  { label: 'About', href: '#about' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Contact', href: '#contact' },
+]
+
+const SKILLS = [
+  {
+    category: 'Cloud Platforms',
+    icon: <Cloud size={18} />,
+    items: ['AWS (EC2, Lambda, S3, CloudFront)', 'DynamoDB · CloudWatch · WAF', 'Azure', 'CloudFormation'],
+  },
+  {
+    category: 'Infrastructure as Code',
+    icon: <Layers size={18} />,
+    items: ['Terraform', 'Bicep', 'Ansible', 'Helm', 'CloudFormation', 'ARM Templates'],
+  },
+  {
+    category: 'CI/CD & Automation',
+    icon: <GitBranch size={18} />,
+    items: ['GitHub Actions', 'Azure DevOps', 'Jenkins', 'GitLab CI', 'Python', 'Bash', 'PowerShell'],
+  },
+  {
+    category: 'Containers & Orchestration',
+    icon: <Server size={18} />,
+    items: ['Kubernetes (AKS · EKS)', 'Docker', 'Helm', 'GitOps', 'Container Registry'],
+  },
+  {
+    category: 'Monitoring & Observability',
+    icon: <Activity size={18} />,
+    items: ['Datadog', 'Prometheus', 'Grafana', 'ELK Stack', 'CloudWatch', 'PRTG'],
+  },
+  {
+    category: 'Security & Compliance',
+    icon: <Shield size={18} />,
+    items: ['IAM · OIDC', 'Azure Key Vault', 'WAF', 'DevSecOps', 'Security Assessments', 'CloudTrail'],
+  },
+]
+
+const PROJECTS = [
+  {
+    title: 'AWS E-Commerce Infrastructure',
+    description:
+      'Designed and manages AWS infrastructure supporting global e-commerce at Metagenics — CloudFront distributions, Lambda functions, WAF configurations, S3 workloads, and OIDC-based GitHub Actions auth.',
+    tags: ['AWS', 'CloudFront', 'Lambda', 'WAF', 'Terraform', 'GitHub Actions'],
+    icon: <Globe size={24} />,
+    color: 'from-amber-500 to-orange-500',
+  },
+  {
+    title: 'CDN Observability Pipeline',
+    description:
+      'Built an end-to-end CDN observability pipeline on Azure at 3Cloud — real-time metrics ingestion, log aggregation, and interactive Grafana dashboarding for full CDN traffic visibility.',
+    tags: ['Azure', 'Grafana', 'Datadog', 'Log Analytics', 'CDN'],
+    icon: <Activity size={24} />,
+    color: 'from-cyan-500 to-blue-500',
+  },
+  {
+    title: 'AKS Migration at Scale',
+    description:
+      'Migrated 150+ monolithic applications from on-premise servers to Azure Kubernetes Service at Safeway Philtech, retiring legacy infrastructure and delivering full-stack observability with Prometheus + Grafana.',
+    tags: ['AKS', 'Kubernetes', 'Helm', 'Terraform', 'Prometheus', 'Grafana'],
+    icon: <Server size={24} />,
+    color: 'from-indigo-500 to-purple-500',
+  },
+  {
+    title: 'Multi-Environment Azure Landing Zones',
+    description:
+      'Provisioned multi-environment Azure landing zones across five deployment stages using Bicep and Azure DevOps Release Pipelines — Storage Accounts, App Insights, and Log Analytics as a unified repeatable deployment.',
+    tags: ['Bicep', 'Azure DevOps', 'Terraform', 'IaC', 'Azure'],
+    icon: <Layers size={24} />,
+    color: 'from-green-500 to-emerald-500',
+  },
+  {
+    title: 'AI-Driven Cloud Governance',
+    description:
+      'Prototyped an AI-driven cloud governance solution using Azure AI Foundry and Content Understanding for automated resource compliance enforcement — policy logic driven entirely by a natural language document, zero custom code.',
+    tags: ['Azure AI Foundry', 'AI/ML', 'Compliance', 'Azure', 'Governance'],
+    icon: <Zap size={24} />,
+    color: 'from-violet-500 to-indigo-500',
+  },
+  {
+    title: 'Automated Monitoring Sensor Pipeline',
+    description:
+      'Built an Azure DevOps Classic Release Pipeline with a self-hosted agent to automate infrastructure monitoring sensor creation, eliminating manual config and securing all credentials through Azure Key Vault.',
+    tags: ['Azure DevOps', 'Key Vault', 'PRTG', 'Automation', 'Self-hosted Agent'],
+    icon: <Lock size={24} />,
+    color: 'from-rose-500 to-pink-500',
+  },
+]
+
+const EXPERIENCE = [
+  {
+    role: 'DevOps Engineer',
+    company: 'Metagenics',
+    period: '2025 – Present',
+    description:
+      'Design and manage AWS cloud infrastructure supporting global e-commerce operations. Lead incident response, enforce security best practices, and drive observability across production systems.',
+    highlights: [
+      'Manage CloudFront, Lambda, WAF, and S3-based workloads at global scale',
+      'Implemented OIDC-based GitHub Actions auth and IAM least-privilege policies',
+      'Lead RCA and incident resolution for production AWS issues',
+      'Drive Datadog observability across production, proactively resolving bottlenecks',
+    ],
+  },
+  {
+    role: 'DevOps Engineer',
+    company: '3Cloud',
+    period: 'Jul 2023 – 2025',
+    description:
+      'Delivered cloud infrastructure and DevOps solutions for enterprise clients across multi-environment Azure deployments using Terraform, Bicep, and Azure DevOps.',
+    highlights: [
+      'Provisioned multi-environment Azure landing zones across 5 deployment stages',
+      'Built CDN observability pipeline with real-time metrics and dashboarding',
+      'Prototyped AI-driven cloud governance using Azure AI Foundry',
+      'Automated monitoring sensor creation, eliminating manual configuration',
+    ],
+  },
+  {
+    role: 'Senior DevOps Engineer',
+    company: 'Asurion',
+    period: 'Jun 2022 – Feb 2023',
+    description:
+      'Designed AWS-based architectures for high-traffic applications. Administered 50+ EC2 instances, managed multi-DB environments, and provided 24/7 on-call production support.',
+    highlights: [
+      'Designed EC2, DynamoDB, Lambda, S3 architectures with Terraform',
+      'Administered 50+ EC2 instances and Azure VMs using Ansible',
+      'Built and optimized CI/CD pipelines using GitHub Actions and Jenkins',
+      'Conducted infrastructure reviews and security assessments',
+    ],
+  },
+  {
+    role: 'DevOps Engineer',
+    company: 'Safeway Philtech Inc.',
+    period: 'Jun 2020 – May 2022',
+    description:
+      'Led large-scale AKS migration, administered Kubernetes clusters end-to-end, and built full-stack observability with Prometheus and Grafana across production workloads.',
+    highlights: [
+      'Migrated 150+ monolithic apps from on-premise to AKS',
+      'Administered AKS clusters — provisioning, scaling, upgrades, HA config',
+      'Configured Prometheus + Grafana across all Kubernetes infrastructure',
+      'Designed CI/CD pipelines using Jenkins and Terraform for containerized workloads',
+    ],
+  },
+  {
+    role: 'DevOps Specialist',
+    company: 'Home Credit Philippines',
+    period: 'Oct 2019 – May 2020',
+    description:
+      'Built GitLab CI pipelines for microservices deployment, automated cloud provisioning with Terraform and Ansible, and integrated real-time monitoring solutions.',
+    highlights: [
+      'Built and maintained GitLab CI pipelines for microservices deployment',
+      'Automated ETL deployments and integrated real-time monitoring',
+      'Automated cloud resource provisioning and config management with Terraform',
+    ],
+  },
+  {
+    role: 'DevOps Engineer',
+    company: 'Accenture Inc.',
+    period: 'Dec 2017 – Sep 2019',
+    description:
+      'Designed and maintained AWS architectures, automated deployments with Jenkins and Terraform, and conducted AWS security audits across managed accounts.',
+    highlights: [
+      'Designed Lambda, CloudFormation, S3, and CloudWatch monitoring solutions',
+      'Automated deployments using Jenkins, Terraform, and Python',
+      'Conducted AWS security audits and enforced cloud security best practices',
+    ],
+  },
+]
+
+const CERTS = [
+  { name: 'Azure DevOps Engineer Expert', code: 'AZ-400', color: 'from-blue-500 to-indigo-500' },
+  { name: 'Azure Administrator Associate', code: 'AZ-104', color: 'from-cyan-500 to-blue-500' },
+  { name: 'Azure Fundamentals', code: 'AZ-900', color: 'from-sky-500 to-cyan-500' },
+]
 
 function GithubIcon({ size = 20 }) {
   return (
@@ -20,154 +197,25 @@ function LinkedinIcon({ size = 20 }) {
   )
 }
 
-const NAV_LINKS = [
-  { label: 'About', href: '#about' },
-  { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'Contact', href: '#contact' },
-]
-
-const SKILLS = [
-  {
-    category: 'Cloud Platforms',
-    icon: <Cloud size={18} />,
-    items: ['Azure', 'AWS', 'GCP', 'Azure DevOps', 'MACH Architecture'],
-  },
-  {
-    category: 'Infrastructure as Code',
-    icon: <Layers size={18} />,
-    items: ['Terraform', 'Bicep', 'ARM Templates', 'Helm', 'Checkov', 'tfsec'],
-  },
-  {
-    category: 'CI/CD & Automation',
-    icon: <GitBranch size={18} />,
-    items: ['GitHub Actions', 'Azure Pipelines', 'Ansible', 'Bash', 'PowerShell', 'Python'],
-  },
-  {
-    category: 'Containers & Orchestration',
-    icon: <Server size={18} />,
-    items: ['Kubernetes', 'Docker', 'Helm', 'GitOps', 'AKS', 'Container Registry'],
-  },
-  {
-    category: 'Security & Compliance',
-    icon: <Shield size={18} />,
-    items: ['Trivy', 'Gitleaks', 'Azure Key Vault', 'RBAC', 'DevSecOps', 'Secret Scanning'],
-  },
-  {
-    category: 'Observability',
-    icon: <Activity size={18} />,
-    items: ['Azure Monitor', 'Log Analytics', 'Datadog', 'Grafana', 'k6', 'Artillery'],
-  },
-]
-
-const PROJECTS = [
-  {
-    title: 'Multi-Region AKS Platform',
-    description:
-      'Designed and deployed a Kubernetes platform on Azure AKS with multi-region failover, GitOps workflows via Flux, and full observability stack.',
-    tags: ['AKS', 'Terraform', 'GitOps', 'Kubernetes', 'Azure'],
-    icon: <Server size={24} />,
-    color: 'from-indigo-500 to-purple-500',
-  },
-  {
-    title: 'DevSecOps Pipeline Framework',
-    description:
-      'Built reusable GitHub Actions and Azure Pipelines templates with integrated security scanning (Trivy, Checkov, Gitleaks) and automated release gating.',
-    tags: ['GitHub Actions', 'Trivy', 'Checkov', 'Security', 'CI/CD'],
-    icon: <Lock size={24} />,
-    color: 'from-cyan-500 to-blue-500',
-  },
-  {
-    title: 'MACH E-Commerce Infrastructure',
-    description:
-      'Provisioned and maintained cloud infrastructure for a MACH-architecture e-commerce platform using Terraform, Azure, and MACH Composer.',
-    tags: ['MACH', 'Azure', 'Terraform', 'Microservices', 'Helm'],
-    icon: <Globe size={24} />,
-    color: 'from-amber-500 to-orange-500',
-  },
-  {
-    title: 'Automated Runbook System',
-    description:
-      'Developed Ansible playbooks and PowerShell scripts reducing manual operational toil by 70%, covering backups, scaling, and patching.',
-    tags: ['Ansible', 'PowerShell', 'Automation', 'Bash', 'Operations'],
-    icon: <Terminal size={24} />,
-    color: 'from-green-500 to-emerald-500',
-  },
-  {
-    title: 'Secrets Management Overhaul',
-    description:
-      'Migrated all hardcoded secrets to Azure Key Vault with managed identity, eliminating secret sprawl and achieving full compliance.',
-    tags: ['Key Vault', 'Managed Identity', 'RBAC', 'Compliance', 'Azure'],
-    icon: <Shield size={24} />,
-    color: 'from-rose-500 to-pink-500',
-  },
-  {
-    title: 'Cloud Cost Optimization',
-    description:
-      'Built a cost monitoring and alerting system using Azure Cost Management and custom dashboards, driving a 30% reduction in monthly spend.',
-    tags: ['Azure', 'Cost Management', 'Monitoring', 'Grafana', 'Cloud'],
-    icon: <Zap size={24} />,
-    color: 'from-violet-500 to-indigo-500',
-  },
-]
-
-const EXPERIENCE = [
-  {
-    role: 'DevOps Engineer',
-    company: 'Metagenics',
-    period: '2023 – Present',
-    description:
-      'Lead DevOps engineering for the DOPS team supporting a MACH-architecture e-commerce platform. Own the full CI/CD ecosystem, cloud infrastructure, security posture, and release lifecycle across Azure DevOps and GitHub.',
-    highlights: [
-      'Built and maintain a 12-agent DevOps automation system powered by Claude AI',
-      'Designed multi-environment promotion pipeline (DEV → QA → Staging → Prod)',
-      'Implemented DevSecOps practices with zero-secrets-in-code policy',
-      'Reduced deployment failures by 60% via improved pipeline gates and runbooks',
-    ],
-  },
-  {
-    role: 'Cloud Infrastructure Engineer',
-    company: 'Previous Role',
-    period: '2021 – 2023',
-    description:
-      'Managed cloud infrastructure across AWS and Azure, built automation tooling, and led the migration of legacy systems to container-based architectures on Kubernetes.',
-    highlights: [
-      'Migrated 20+ microservices to Kubernetes with zero downtime',
-      'Authored Terraform modules adopted across 3 engineering teams',
-      'Reduced infrastructure provisioning time from days to under 30 minutes',
-    ],
-  },
-]
-
 function Nav() {
   const [scrolled, setScrolled] = useState(false)
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'nav-blur' : ''}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <span className="font-bold text-lg gradient-text">ES</span>
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map(link => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200"
-            >
+            <a key={link.href} href={link.href} className="text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200">
               {link.label}
             </a>
           ))}
         </div>
-        <a
-          href="mailto:emc.sioson@gmail.com"
-          className="btn-primary px-4 py-2 rounded-lg text-sm font-semibold text-white"
-        >
+        <a href="mailto:emc.sioson@gmail.com" className="btn-primary px-4 py-2 rounded-lg text-sm font-semibold text-white">
           Hire Me
         </a>
       </div>
@@ -182,27 +230,22 @@ function Hero() {
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-float" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
       </div>
-
       <div className="relative z-10 max-w-4xl mx-auto fade-in">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium mb-8">
           <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          Available for opportunities
+          Open to Remote Opportunities · Manila, Philippines
         </div>
-
         <h1 className="text-6xl md:text-8xl font-black mb-4 leading-none tracking-tight">
           <span className="gradient-text">Earl</span>{' '}
           <span className="text-white">Sioson</span>
         </h1>
-
         <p className="text-2xl md:text-3xl font-bold text-slate-300 mb-6">
           DevOps &amp; Cloud Engineer
         </p>
-
         <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-          Building resilient cloud infrastructure, automating everything, and shipping software
-          faster — from IaC to CI/CD to Kubernetes at scale.
+          7+ years designing, automating, and operating cloud-native infrastructure at enterprise scale —
+          AWS · Kubernetes · Terraform · CI/CD.
         </p>
-
         <div className="flex flex-wrap items-center justify-center gap-4">
           <a href="#projects" className="btn-primary px-8 py-3.5 rounded-xl font-semibold text-white text-base">
             View My Work
@@ -211,25 +254,19 @@ function Hero() {
             Get In Touch
           </a>
         </div>
-
         <div className="flex items-center justify-center gap-4 mt-10">
           {[
             { icon: <GithubIcon size={20} />, href: 'https://github.com/eaarrll', label: 'GitHub' },
             { icon: <LinkedinIcon size={20} />, href: 'https://www.linkedin.com/in/earl-martin-sioson/', label: 'LinkedIn' },
             { icon: <Mail size={20} />, href: 'mailto:emc.sioson@gmail.com', label: 'Email' },
           ].map(s => (
-            <a
-              key={s.label}
-              href={s.href}
-              aria-label={s.label}
-              className="p-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all duration-200"
-            >
+            <a key={s.label} href={s.href} aria-label={s.label}
+              className="p-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all duration-200">
               {s.icon}
             </a>
           ))}
         </div>
       </div>
-
       <a href="#about" className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-500 hover:text-slate-300 transition-colors animate-bounce">
         <ChevronDown size={24} />
       </a>
@@ -249,29 +286,26 @@ function About() {
           </h2>
           <div className="space-y-4 text-slate-400 text-base leading-relaxed">
             <p>
-              I'm a DevOps and Cloud Engineer with a passion for building the systems that let
-              teams ship with confidence. From provisioning infrastructure with Terraform to
-              designing zero-downtime deployment pipelines, I bridge the gap between development
-              speed and operational stability.
+              Results-driven DevOps Engineer with 7+ years of experience designing, automating, and
+              operating cloud-native infrastructure at enterprise scale. Deep expertise across AWS services,
+              Kubernetes orchestration, and CI/CD pipeline automation using Terraform, Bicep, and GitHub Actions.
             </p>
             <p>
-              At Metagenics, I lead the DOPS team's cloud engineering efforts — owning CI/CD,
-              AKS infrastructure, security posture, and the entire release lifecycle for a
-              modern MACH e-commerce platform on Azure.
+              Proven track record in incident response, root cause analysis, and maintaining high-availability
+              production systems. Experienced in distributed, remote-first environments — collaborating across
+              engineering and non-technical stakeholders to deliver mission-critical solutions securely and reliably.
             </p>
-            <p>
-              When I'm not automating toil, I'm exploring AI-augmented DevOps workflows —
-              including multi-agent systems that help teams move faster without burning out.
+            <p className="flex items-center gap-2 text-slate-500 text-sm">
+              <span className="text-indigo-400">📍</span> Manila, Philippines · Open to Remote
             </p>
           </div>
         </div>
-
         <div className="grid grid-cols-2 gap-4">
           {[
-            { value: '5+', label: 'Years in Cloud & DevOps', icon: <Cloud size={20} /> },
-            { value: '99.9%', label: 'Platform Uptime Target', icon: <Activity size={20} /> },
-            { value: '60%', label: 'Fewer Deployment Failures', icon: <GitBranch size={20} /> },
-            { value: '30%', label: 'Cloud Cost Reduction', icon: <Zap size={20} /> },
+            { value: '7+', label: 'Years in Cloud & DevOps', icon: <Cloud size={20} /> },
+            { value: '150+', label: 'Apps Migrated to Kubernetes', icon: <Server size={20} /> },
+            { value: '50+', label: 'EC2 Instances Administered', icon: <Database size={20} /> },
+            { value: '3x', label: 'Microsoft Azure Certified', icon: <Award size={20} /> },
           ].map(stat => (
             <div key={stat.label} className="card-glow rounded-2xl p-6 text-center">
               <div className="flex items-center justify-center mb-3 text-indigo-400">{stat.icon}</div>
@@ -293,7 +327,6 @@ function Skills() {
           <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Tech Stack</p>
           <h2 className="text-4xl md:text-5xl font-black text-white section-heading">Skills &amp; Tools</h2>
         </div>
-
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {SKILLS.map(group => (
             <div key={group.category} className="card-glow rounded-2xl p-6">
@@ -324,7 +357,6 @@ function Projects() {
           <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Portfolio</p>
           <h2 className="text-4xl md:text-5xl font-black text-white section-heading">Featured Projects</h2>
         </div>
-
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {PROJECTS.map(project => (
             <div key={project.title} className="card-glow rounded-2xl p-6 flex flex-col group cursor-pointer">
@@ -356,11 +388,9 @@ function Experience() {
           <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Career</p>
           <h2 className="text-4xl md:text-5xl font-black text-white section-heading">Experience</h2>
         </div>
-
         <div className="relative">
           <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500 via-cyan-500 to-transparent" />
-
-          <div className="space-y-10">
+          <div className="space-y-8">
             {EXPERIENCE.map((exp, i) => (
               <div key={i} className="pl-20 relative">
                 <div className="timeline-dot absolute left-6 top-1.5 w-4 h-4 rounded-full -translate-x-1/2" />
@@ -370,12 +400,12 @@ function Experience() {
                       <h3 className="font-black text-xl text-white">{exp.role}</h3>
                       <p className="text-indigo-400 font-semibold">{exp.company}</p>
                     </div>
-                    <span className="text-slate-400 text-sm font-medium bg-white/5 px-3 py-1 rounded-full border border-white/8">
+                    <span className="text-slate-400 text-sm font-medium bg-white/5 px-3 py-1 rounded-full border border-white/8 shrink-0">
                       {exp.period}
                     </span>
                   </div>
-                  <p className="text-slate-400 text-sm leading-relaxed mb-5">{exp.description}</p>
-                  <ul className="space-y-2">
+                  <p className="text-slate-400 text-sm leading-relaxed mb-4">{exp.description}</p>
+                  <ul className="space-y-1.5">
                     {exp.highlights.map((h, j) => (
                       <li key={j} className="flex items-start gap-3 text-sm text-slate-300">
                         <span className="text-indigo-400 mt-0.5 shrink-0">▸</span>
@@ -384,6 +414,37 @@ function Experience() {
                     ))}
                   </ul>
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Education */}
+        <div className="mt-16">
+          <h3 className="text-2xl font-black text-white mb-6 text-center">Education</h3>
+          <div className="card-glow rounded-2xl p-6 flex items-center gap-5">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xl shrink-0">
+              🎓
+            </div>
+            <div>
+              <p className="font-bold text-white">Bachelor of Science in Information Technology</p>
+              <p className="text-indigo-400 font-semibold text-sm">Colegio de San Juan de Letran</p>
+              <p className="text-slate-500 text-sm">2011 – 2017</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Certifications */}
+        <div className="mt-10">
+          <h3 className="text-2xl font-black text-white mb-6 text-center">Certifications</h3>
+          <div className="grid sm:grid-cols-3 gap-4">
+            {CERTS.map(cert => (
+              <div key={cert.code} className="card-glow rounded-2xl p-5 text-center">
+                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${cert.color} text-white font-black text-sm mb-3`}>
+                  {cert.code}
+                </div>
+                <p className="text-white font-semibold text-sm leading-tight">Microsoft Certified</p>
+                <p className="text-slate-400 text-xs mt-1">{cert.name}</p>
               </div>
             ))}
           </div>
@@ -403,30 +464,22 @@ function Contact() {
           <span className="gradient-text">remarkable together</span>
         </h2>
         <p className="text-slate-400 text-lg mb-10 leading-relaxed">
-          Open to senior DevOps, platform engineering, and cloud architecture roles.
+          Open to senior DevOps, platform engineering, and cloud architecture roles — remote preferred.
           Let's talk about how I can help your team ship faster and sleep better.
         </p>
-
-        <a
-          href="mailto:emc.sioson@gmail.com"
-          className="btn-primary inline-flex items-center gap-3 px-10 py-4 rounded-xl font-semibold text-white text-lg mb-12"
-        >
+        <a href="mailto:emc.sioson@gmail.com"
+          className="btn-primary inline-flex items-center gap-3 px-10 py-4 rounded-xl font-semibold text-white text-lg mb-12">
           <Mail size={20} />
           emc.sioson@gmail.com
         </a>
-
         <div className="flex items-center justify-center gap-4">
           {[
             { icon: <GithubIcon size={22} />, label: 'GitHub', href: 'https://github.com/eaarrll' },
             { icon: <LinkedinIcon size={22} />, label: 'LinkedIn', href: 'https://www.linkedin.com/in/earl-martin-sioson/' },
             { icon: <Mail size={22} />, label: 'Email', href: 'mailto:emc.sioson@gmail.com' },
           ].map(s => (
-            <a
-              key={s.label}
-              href={s.href}
-              aria-label={s.label}
-              className="flex items-center gap-2 px-5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all duration-200 font-medium text-sm"
-            >
+            <a key={s.label} href={s.href} aria-label={s.label}
+              className="flex items-center gap-2 px-5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all duration-200 font-medium text-sm">
               {s.icon}
               {s.label}
             </a>
@@ -441,7 +494,7 @@ function Footer() {
   return (
     <footer className="py-8 px-6 border-t border-white/5 text-center">
       <p className="text-slate-600 text-sm">
-        © {new Date().getFullYear()} Earl Sioson · Built with React + Tailwind
+        © {new Date().getFullYear()} Earl Martin Sioson · Manila, Philippines · Open to Remote
       </p>
     </footer>
   )

@@ -1,99 +1,174 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
-  Cloud, GitBranch, Shield, Terminal, Server, Activity,
-  Mail, ChevronDown, Layers, Lock, Globe, Zap, Database, Award,
+  Cloud, GitBranch, Shield, Server, Activity, Mail, ChevronDown,
+  Layers, Globe, Zap, Database, Sparkles, ExternalLink,
+  ArrowUpRight, Radio, MapPin, Boxes, Gauge, FolderGit2,
+  Users, Workflow, Rocket,
 } from 'lucide-react'
+
+const GITHUB_URL = 'https://github.com/eaarrll'
+const LINKEDIN_URL = 'https://www.linkedin.com/in/earl-martin-sioson/'
+const EMAIL = 'emc.sioson@gmail.com'
 
 const NAV_LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Skills', href: '#skills' },
-  { label: 'Projects', href: '#projects' },
+  { label: 'Work', href: '#work' },
+  { label: 'Lab', href: '#lab' },
   { label: 'Experience', href: '#experience' },
   { label: 'Contact', href: '#contact' },
 ]
 
+const TECH_MARQUEE = [
+  'AWS', 'Azure', 'Kubernetes', 'Terraform', 'Docker', 'GitHub Actions',
+  'Azure DevOps', 'Bicep', 'CloudFormation', 'Helm', 'GitLab CI', 'Jenkins',
+  'Datadog', 'Prometheus', 'Grafana', 'PowerShell', 'Python', 'Ansible',
+]
+
 const SKILLS = [
   {
-    category: 'Cloud Platforms',
-    icon: <Cloud size={18} />,
-    items: ['AWS (EC2, Lambda, S3, CloudFront)', 'DynamoDB · CloudWatch · WAF', 'Azure', 'CloudFormation'],
-  },
-  {
-    category: 'Infrastructure as Code',
-    icon: <Layers size={18} />,
-    items: ['Terraform', 'Bicep', 'Ansible', 'Helm', 'CloudFormation', 'ARM Templates'],
-  },
-  {
-    category: 'CI/CD & Automation',
+    category: 'CI/CD & Release Automation',
     icon: <GitBranch size={18} />,
-    items: ['GitHub Actions', 'Azure DevOps', 'Jenkins', 'GitLab CI', 'Python', 'Bash', 'PowerShell'],
+    items: ['GitHub Actions', 'Azure DevOps Pipelines (Classic & YAML)', 'GitLab CI', 'Jenkins', 'Reusable Pipeline Templates', 'Release Management', 'Approval & Policy Gates'],
   },
   {
-    category: 'Containers & Orchestration',
-    icon: <Server size={18} />,
-    items: ['Kubernetes (AKS · EKS)', 'Docker', 'Helm', 'GitOps', 'Container Registry'],
+    category: 'AWS Cloud',
+    icon: <Globe size={18} />,
+    items: ['EC2', 'Lambda', 'EKS', 'DynamoDB', 'CloudFront', 'Route 53', 'S3', 'API Gateway'],
   },
   {
-    category: 'Monitoring & Observability',
-    icon: <Activity size={18} />,
-    items: ['Datadog', 'Prometheus', 'Grafana', 'ELK Stack', 'CloudWatch', 'PRTG'],
+    category: 'Azure Cloud',
+    icon: <Cloud size={18} />,
+    items: ['AKS', 'App Services', 'Azure SQL', 'Key Vault', 'VNets', 'Azure Monitor', 'Bicep'],
   },
   {
-    category: 'Security & Compliance',
+    category: 'IaC & Containers',
+    icon: <Layers size={18} />,
+    items: ['Terraform', 'Bicep', 'CloudFormation', 'ARM Templates', 'Ansible', 'Kubernetes', 'Docker', 'Helm'],
+  },
+  {
+    category: 'DevSecOps & Security',
     icon: <Shield size={18} />,
-    items: ['IAM · OIDC', 'Azure Key Vault', 'WAF', 'DevSecOps', 'Security Assessments', 'CloudTrail'],
+    items: ['IAM · GitHub OIDC', 'Azure Key Vault', 'RBAC', 'Secrets Management', 'IaC Validation', 'Least-Privilege Access'],
+  },
+  {
+    category: 'Observability & Scripting',
+    icon: <Activity size={18} />,
+    items: ['CloudWatch', 'Azure Monitor', 'Datadog', 'Prometheus', 'Grafana', 'ELK', 'PowerShell', 'Python', 'Bash'],
   },
 ]
 
 const PROJECTS = [
   {
-    title: 'AWS E-Commerce Infrastructure',
+    title: 'CI/CD Re-Architecture, 40% Faster',
     description:
-      'Designed and manages AWS infrastructure supporting global e-commerce at Metagenics — CloudFront distributions, Lambda functions, WAF configurations, S3 workloads, and OIDC-based GitHub Actions auth.',
-    tags: ['AWS', 'CloudFront', 'Lambda', 'WAF', 'Terraform', 'GitHub Actions'],
-    icon: <Globe size={24} />,
+      'Re-architected global e-commerce CI/CD on AWS with parallel execution, approval gates, reusable patterns, and rollback workflows — cutting release cycle time ~40% — secured end-to-end with GitHub OIDC and least-privilege IAM.',
+    tags: ['AWS', 'GitHub Actions', 'OIDC', 'Terraform', 'Rollback'],
+    icon: <Rocket size={24} />,
     color: 'from-amber-500 to-orange-500',
   },
   {
-    title: 'CDN Observability Pipeline',
+    title: 'Azure DevOps Pipeline Platform',
     description:
-      'Built an end-to-end CDN observability pipeline on Azure at 3Cloud — real-time metrics ingestion, log aggregation, and interactive Grafana dashboarding for full CDN traffic visibility.',
-    tags: ['Azure', 'Grafana', 'Datadog', 'Log Analytics', 'CDN'],
-    icon: <Activity size={24} />,
+      'Reusable Azure DevOps pipeline templates (Classic & YAML) for build validation, automated testing, deployment approvals, secret integration, and environment promotion — standardizing delivery and cutting per-client setup effort ~50%.',
+    tags: ['Azure DevOps', 'YAML', 'Bicep', 'Key Vault', 'Release Gates'],
+    icon: <Workflow size={24} />,
     color: 'from-cyan-500 to-blue-500',
   },
   {
-    title: 'AKS Migration at Scale',
+    title: 'Serverless DR & Cost Optimization',
     description:
-      'Migrated 150+ monolithic applications from on-premise servers to Azure Kubernetes Service at Safeway Philtech, retiring legacy infrastructure and delivering full-stack observability with Prometheus + Grafana.',
-    tags: ['AKS', 'Kubernetes', 'Helm', 'Terraform', 'Prometheus', 'Grafana'],
-    icon: <Server size={24} />,
-    color: 'from-indigo-500 to-purple-500',
+      'Designed cross-region disaster recovery for a serverless AWS stack (Lambda, API Gateway, DynamoDB, S3) with defined RTO/RPO targets — and led a FinOps audit that cut AWS spend ~30% (~$80K/year).',
+    tags: ['AWS', 'Disaster Recovery', 'Serverless', 'FinOps'],
+    icon: <Shield size={24} />,
+    color: 'from-rose-500 to-pink-500',
   },
   {
-    title: 'Multi-Environment Azure Landing Zones',
+    title: '150+ App Migration to AKS',
     description:
-      'Provisioned multi-environment Azure landing zones across five deployment stages using Bicep and Azure DevOps Release Pipelines — Storage Accounts, App Insights, and Log Analytics as a unified repeatable deployment.',
-    tags: ['Bicep', 'Azure DevOps', 'Terraform', 'IaC', 'Azure'],
-    icon: <Layers size={24} />,
+      'Led migration of 150+ applications to Azure Kubernetes Service — delivered 2 months ahead of schedule with zero production downtime — and established the org’s first IaC standards with Terraform and Helm.',
+    tags: ['AKS', 'Kubernetes', 'Helm', 'Terraform', 'Zero Downtime'],
+    icon: <Server size={24} />,
     color: 'from-green-500 to-emerald-500',
   },
   {
-    title: 'AI-Driven Cloud Governance',
+    title: 'Multi-Cloud Landing Zones',
     description:
-      'Prototyped an AI-driven cloud governance solution using Azure AI Foundry and Content Understanding for automated resource compliance enforcement — policy logic driven entirely by a natural language document, zero custom code.',
-    tags: ['Azure AI Foundry', 'AI/ML', 'Compliance', 'Azure', 'Governance'],
-    icon: <Zap size={24} />,
-    color: 'from-violet-500 to-indigo-500',
+      'Built self-service pipelines that let teams stand up compliant, policy-aligned cloud environments on demand — backed by reusable Terraform and Bicep module libraries with governance and FinOps built in.',
+    tags: ['Terraform', 'Bicep', 'Azure', 'Landing Zones', 'FinOps'],
+    icon: <Layers size={24} />,
+    color: 'from-indigo-500 to-purple-500',
   },
   {
-    title: 'Automated Monitoring Sensor Pipeline',
+    title: 'AI-Assisted Delivery with Claude',
     description:
-      'Built an Azure DevOps Classic Release Pipeline with a self-hosted agent to automate infrastructure monitoring sensor creation, eliminating manual config and securing all credentials through Azure Key Vault.',
-    tags: ['Azure DevOps', 'Key Vault', 'PRTG', 'Automation', 'Self-hosted Agent'],
-    icon: <Lock size={24} />,
-    color: 'from-rose-500 to-pink-500',
+      'Built agentic release workflows with Claude AI — automated PR-review summaries, pre-deployment validation, release-note generation, and JQL ticket tracking — surfacing issues earlier and cutting manual coordination.',
+    tags: ['Claude AI', 'Automation', 'CI/CD', 'Jira'],
+    icon: <Sparkles size={24} />,
+    color: 'from-violet-500 to-indigo-500',
   },
+]
+
+/* Personal projects pulled from github.com/eaarrll */
+const LAB_FEATURED = {
+  title: 'Infra Status Dashboard',
+  description:
+    'A real-time uptime board that aggregates official status feeds from major cloud and developer platforms via RSS — server-rendered with Next.js ISR and auto-refreshed every 60 seconds. The single pane of glass I wished every on-call engineer had open.',
+  tags: ['Next.js 16', 'React 19', 'TypeScript', 'RSS', 'ISR', 'Vercel'],
+  live: 'https://infra-status-dashboard.vercel.app',
+  repo: 'https://github.com/eaarrll/infra-status-dashboard',
+}
+
+const LAB = [
+  {
+    title: 'SRE-PH · Life Admin',
+    kind: 'Web App',
+    web: true,
+    description:
+      'Treats Philippine bureaucracy like production infrastructure — an SRE-style dashboard that tracks IDs, licenses, and renewals with SLAs, expiry alerts, and Gemini-powered guidance.',
+    tags: ['TypeScript', 'Gemini API', 'Vite', 'Vercel'],
+    live: 'https://id-tracker-psi.vercel.app',
+    repo: 'https://github.com/eaarrll/id-tracker',
+    icon: <Radio size={22} />,
+    accent: 'from-cyan-500 to-blue-500',
+  },
+  {
+    title: 'Manila Outages',
+    kind: 'Android',
+    description:
+      'Metro Manila power & water interruption tracker with a crowdsourced outage map and AI-summarized advisories. Native Android, built in Kotlin.',
+    tags: ['Android', 'Kotlin', 'Gemini API', 'Maps'],
+    repo: 'https://github.com/eaarrll/manila-outages',
+    icon: <Zap size={22} />,
+    accent: 'from-amber-500 to-orange-500',
+  },
+  {
+    title: 'Para Po! — Commuter ETA',
+    kind: 'Android',
+    description:
+      'Crowdsourced ETA tracking for jeepneys, UV Express, and provincial buses with no GPS trackers — commuters help commuters wait less. Kotlin + Gemini.',
+    tags: ['Android', 'Kotlin', 'Gemini API', 'Crowdsourced'],
+    repo: 'https://github.com/eaarrll/ph-commute-eta-tracker',
+    icon: <MapPin size={22} />,
+    accent: 'from-green-500 to-emerald-500',
+  },
+  {
+    title: 'BIR Discount Validator',
+    kind: 'Android',
+    description:
+      'Philippine BIR compliance calculator with an OCR receipt scanner and logbook parser for senior-citizen & PWD discounts — purpose-built for small businesses.',
+    tags: ['Android', 'Kotlin', 'Gemini API', 'OCR'],
+    repo: 'https://github.com/eaarrll/BIR-discount-calculator',
+    icon: <Boxes size={22} />,
+    accent: 'from-violet-500 to-indigo-500',
+  },
+]
+
+const STATS = [
+  { value: 7, suffix: '+', label: 'Years in DevOps & Cloud', icon: <Cloud size={20} /> },
+  { value: 150, suffix: '+', label: 'Apps Migrated to Kubernetes', icon: <Server size={20} /> },
+  { value: 500, suffix: '+', label: 'Cloud Instances Administered', icon: <Database size={20} /> },
+  { value: 25, suffix: '+', label: 'Engineers Mentored & Upskilled', icon: <Users size={20} /> },
 ]
 
 const EXPERIENCE = [
@@ -101,83 +176,85 @@ const EXPERIENCE = [
     role: 'DevOps Engineer',
     company: 'Metagenics',
     period: '2025 – Present',
-    description: 'Owns global AWS cloud infrastructure for a high-traffic e-commerce platform — from pipeline automation to security enforcement and production incident command.',
+    description: 'Owns CI/CD and AWS cloud infrastructure for a global e-commerce platform — re-architecting pipelines, hardening security, and driving cloud cost efficiency.',
     highlights: [
-      'Architected and operates the full AWS stack — CloudFront, Lambda, WAF, and S3 — powering global e-commerce at scale',
-      'Eliminated long-lived credentials org-wide by implementing OIDC-based GitHub Actions auth with IAM least-privilege across all repositories',
-      'Cut mean time to resolution on production incidents by owning end-to-end RCA — from WAF misconfigurations to Lambda constraints — with clear reporting to both engineering and business stakeholders',
-      'Built Datadog observability layer across all production monitors, enabling proactive detection and resolution of bottlenecks before they reach customers',
+      'Re-architected CI/CD pipelines with parallel execution, approval gates, reusable patterns, and rollback workflows — cutting release cycle time by ~40%',
+      'Embedded pipeline security with GitHub OIDC authentication and least-privilege IAM, eliminating long-lived credentials for business-critical deployments',
+      'Designed a disaster-recovery strategy for a serverless AWS architecture (Lambda, API Gateway, DynamoDB, S3) with cross-region failover and defined RTO/RPO targets',
+      'Led a cloud cost-optimization audit that cut AWS spend ~30% (~$80K/year) via rightsizing, Reserved Instances, and idle-resource decommissioning',
+      'Automated release management and PR-review gates with Claude AI — release notes, JQL ticket tracking, and pre-deployment validation',
     ],
   },
   {
     role: 'DevOps Engineer',
     company: '3Cloud',
     period: 'Jul 2023 – 2025',
-    description: 'Delivered enterprise-grade Azure infrastructure and DevOps automation for multiple clients — from repeatable landing zones to AI-powered compliance tooling.',
+    description: 'Delivered enterprise Azure DevOps automation and infrastructure for multiple consulting clients — from reusable pipeline templates to self-service landing zones and FinOps.',
     highlights: [
-      'Shipped 5-stage Azure landing zones using Bicep + Azure DevOps Pipelines, provisioning Storage, App Insights, and Log Analytics as a single unified, repeatable deployment across all environments',
-      'Built a zero-touch monitoring automation pipeline via Azure DevOps + self-hosted agent — eliminating all manual sensor setup and vaulting every credential in Key Vault',
-      'Prototyped AI-driven cloud governance with Azure AI Foundry: compliance policy enforced entirely from a plain English document, zero custom code written',
-      'Delivered end-to-end CDN observability platform on Azure — real-time metrics ingestion, log aggregation, and interactive dashboards giving full traffic visibility',
+      'Designed and maintained Azure DevOps pipeline templates (Classic & YAML) for build validation, automated testing, deployment approvals, secret integration, and environment promotion',
+      'Built self-service pipelines for Azure resource provisioning and landing zones, letting teams stand up compliant, policy-aligned environments on demand',
+      'Authored reusable Terraform and Bicep module libraries and standardized pipeline patterns — reducing per-client setup effort by ~50% and configuration drift',
+      'Implemented FinOps practices — resource tagging, budget alerts, and rightsizing — giving clients clear spend visibility and cutting waste across subscriptions',
     ],
   },
   {
     role: 'Senior DevOps Engineer',
     company: 'Asurion',
     period: 'Jun 2022 – Feb 2023',
-    description: 'Designed and operated high-availability AWS infrastructure for multiple concurrent high-traffic applications while maintaining 24/7 production support.',
+    description: 'Operated fault-tolerant, multi-cloud infrastructure across AWS and Azure for customer-facing device-insurance services, with 24/7 production ownership.',
     highlights: [
-      'Designed fault-tolerant AWS architectures — EC2, Lambda, DynamoDB, S3 — across multiple high-traffic applications using Terraform from day one',
-      'Managed a fleet of 50+ EC2 instances and Azure VMs with Ansible, enforcing patching standards and closing security compliance gaps across the board',
-      'Built and load-tested CI/CD pipelines with GitHub Actions and Jenkins, validating system performance under production-level conditions before every release',
-      'Owned 24/7 on-call production support — rapid incident triage, resolution, and thorough RCA documentation that drove systemic improvement',
+      'Led production Kubernetes version upgrades across EKS and AKS clusters with minimal-to-zero downtime using controlled node rotation and surge capacity',
+      'Built multi-cloud infrastructure and deployment automation with Terraform and Ansible, standardizing compute, networking, access controls, and patching across AWS and Azure',
+      'Automated patch management across 50+ instances with Ansible — raising patch compliance above 99% and closing a recurring security audit finding',
+      'Led 24/7 on-call incident response with structured RCA and playbooks, mentored 3 junior engineers, and delivered ~$120K in annual cloud savings',
     ],
   },
   {
     role: 'DevOps Engineer',
     company: 'Safeway Philtech Inc.',
     period: 'Jun 2020 – May 2022',
-    description: 'Led one of the largest infrastructure modernization efforts in the company — migrating 150+ applications off legacy servers and into a Kubernetes-native platform.',
+    description: 'Drove the largest containerization effort at this Albertsons IT subsidiary (2,200+ US retail stores) — migrating 150+ apps to AKS and setting IaC standards.',
     highlights: [
-      'Migrated 150+ monolithic applications from on-premise to AKS, fully retiring legacy infrastructure and dramatically improving deployment speed and scalability',
-      'Administered AKS clusters end-to-end — provisioning, autoscaling, zero-downtime upgrades, and high-availability configuration — across multi-team production workloads',
-      'Stood up full-stack observability with Prometheus + Grafana across all Kubernetes layers — infrastructure and application — enabling proactive alerting at scale',
-      'Standardized delivery with Helm Charts and Terraform IaC, enforcing environment parity from dev through production',
+      'Led migration of 150+ applications to Azure Kubernetes Service — delivered 2 months ahead of schedule with zero production downtime',
+      'Established the company’s first Infrastructure-as-Code standards with Terraform and Helm, enforcing environment parity from dev through production',
+      'Built CI/CD workflows for containerized apps — automated build, test, image publishing, Helm deployment, and controlled release promotion into AKS',
+      'Mentored 9 system administrators into DevOps engineers through a structured Git, Jenkins, Terraform, Docker, Kubernetes, and Helm curriculum',
     ],
   },
   {
     role: 'DevOps Specialist',
     company: 'Home Credit Philippines',
     period: 'Oct 2019 – May 2020',
-    description: 'Introduced CI/CD automation and cloud provisioning practices for microservices teams, improving deployment speed and operational visibility.',
+    description: 'Introduced CI/CD automation and release governance for a BSP-regulated consumer-finance platform processing 1M+ monthly transactions.',
     highlights: [
-      'Built GitLab CI pipelines for microservices deployment, reducing manual release effort and improving delivery consistency across teams',
-      'Automated ETL deployments end-to-end and integrated real-time monitoring — giving the team full visibility into data pipeline health for the first time',
-      'Automated cloud resource provisioning with Terraform and Ansible, eliminating environment drift between dev and production',
+      'Built GitLab CI pipelines for application delivery and test automation, with automated rollback reducing deployment failure rate by ~80%',
+      'Strengthened release governance with approval gates, deployment logs, and access restrictions in a regulated, BSP-compliant environment — zero critical audit findings',
+      'Automated cloud provisioning with Terraform and Ansible, eliminating environment drift between development and production',
     ],
   },
   {
     role: 'DevOps Engineer',
     company: 'Accenture Inc.',
     period: 'Dec 2017 – Sep 2019',
-    description: 'Built and secured AWS infrastructure across multiple client accounts, establishing automation standards and cloud security practices from the ground up.',
+    description: 'Built AWS infrastructure and CI/CD automation for Fortune 500 clients including Best Buy, establishing IaC and deployment standards from the ground up.',
     highlights: [
-      'Designed AWS architectures spanning Lambda, CloudFormation, S3, and CloudWatch — with full monitoring and alerting built in from the start',
-      'Automated infrastructure provisioning and deployments across multiple application stacks using Jenkins, Terraform, Python, and Ansible playbooks',
-      'Conducted AWS security audits across managed accounts, identifying and remediating cloud security gaps to enforce best practices at scale',
+      'Built Jenkins CI/CD workflows with zero-downtime blue-green deployments for a retail employee portal serving 100,000+ associates',
+      'Created reusable Terraform and Ansible frameworks that cut environment provisioning from 2 weeks to 2 days',
+      'Trained 15+ developers on CI/CD and Infrastructure-as-Code best practices across client engagements',
     ],
   },
 ]
 
 const CERTS = [
-  { name: 'Azure DevOps Engineer Expert', code: 'AZ-400', color: 'from-blue-500 to-indigo-500' },
-  { name: 'Azure Administrator Associate', code: 'AZ-104', color: 'from-cyan-500 to-blue-500' },
-  { name: 'Azure Fundamentals', code: 'AZ-900', color: 'from-sky-500 to-cyan-500' },
+  { name: 'Azure DevOps Engineer Expert', code: 'AZ-400', issuer: 'Microsoft Certified', color: 'from-blue-500 to-indigo-500' },
+  { name: 'Azure Administrator Associate', code: 'AZ-104', issuer: 'Microsoft Certified', color: 'from-cyan-500 to-blue-500' },
+  { name: 'Azure Fundamentals', code: 'AZ-900', issuer: 'Microsoft Certified', color: 'from-sky-500 to-cyan-500' },
+  { name: 'AWS Solutions Architect Associate', code: 'SAA-C03', issuer: 'AWS', color: 'from-amber-500 to-orange-500', inProgress: true },
 ]
 
 function GithubIcon({ size = 20 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
     </svg>
   )
@@ -185,31 +262,152 @@ function GithubIcon({ size = 20 }) {
 
 function LinkedinIcon({ size = 20 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
       <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
     </svg>
   )
 }
 
+/* ── Hooks ──────────────────────────────────────────── */
+function useScrollReveal() {
+  useEffect(() => {
+    const els = document.querySelectorAll('.reveal')
+    if (!('IntersectionObserver' in window)) {
+      els.forEach(e => e.classList.add('is-visible'))
+      return
+    }
+    const io = new IntersectionObserver(
+      entries => {
+        entries.forEach(en => {
+          if (en.isIntersecting) {
+            en.target.classList.add('is-visible')
+            io.unobserve(en.target)
+          }
+        })
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -8% 0px' }
+    )
+    els.forEach(e => io.observe(e))
+    return () => io.disconnect()
+  }, [])
+}
+
+function useActiveSection(ids) {
+  const [active, setActive] = useState(ids[0])
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      entries => {
+        entries.forEach(en => {
+          if (en.isIntersecting) setActive(en.target.id)
+        })
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    )
+    ids.forEach(id => {
+      const el = document.getElementById(id)
+      if (el) io.observe(el)
+    })
+    return () => io.disconnect()
+  }, [ids])
+  return active
+}
+
+function Counter({ value, suffix = '', duration = 1500 }) {
+  const [n, setN] = useState(0)
+  const ref = useRef(null)
+  const started = useRef(false)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !started.current) {
+        started.current = true
+        const start = performance.now()
+        const tick = t => {
+          const p = Math.min(1, (t - start) / duration)
+          const eased = 1 - Math.pow(1 - p, 3)
+          setN(Math.round(eased * value))
+          if (p < 1) requestAnimationFrame(tick)
+        }
+        requestAnimationFrame(tick)
+      }
+    }, { threshold: 0.4 })
+    io.observe(el)
+    return () => io.disconnect()
+  }, [value, duration])
+  return <span ref={ref}>{n}{suffix}</span>
+}
+
+/* ── Background & chrome ────────────────────────────── */
+function Background() {
+  const ref = useRef(null)
+  useEffect(() => {
+    let raf = 0
+    const onMove = e => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const el = ref.current
+        if (!el) return
+        el.style.setProperty('--mx', `${e.clientX}px`)
+        el.style.setProperty('--my', `${e.clientY}px`)
+      })
+    }
+    window.addEventListener('pointermove', onMove)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      cancelAnimationFrame(raf)
+    }
+  }, [])
+  return (
+    <div ref={ref} className="bg-fx" aria-hidden="true">
+      <div className="bg-grid-base" />
+      <div className="bg-grid-spot" />
+      <div className="bg-spotlight" />
+      <div className="bg-blob bg-blob-1" />
+      <div className="bg-blob bg-blob-2" />
+    </div>
+  )
+}
+
+function ScrollProgress() {
+  const [p, setP] = useState(0)
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement
+      const max = h.scrollHeight - h.clientHeight
+      setP(max > 0 ? h.scrollTop / max : 0)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  return <div className="progress-bar" style={{ transform: `scaleX(${p})` }} aria-hidden="true" />
+}
+
 function Nav() {
   const [scrolled, setScrolled] = useState(false)
+  const active = useActiveSection(['about', 'skills', 'work', 'lab', 'experience', 'contact'])
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
-    window.addEventListener('scroll', onScroll)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'nav-blur' : ''}`}>
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <span className="font-bold text-lg gradient-text">ES</span>
+        <a href="#hero" className="font-black text-lg gradient-text mono tracking-tight">&gt;_ES</a>
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map(link => (
-            <a key={link.href} href={link.href} className="text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200">
+            <a
+              key={link.href}
+              href={link.href}
+              className={`nav-link text-slate-400 hover:text-white text-sm font-medium transition-colors duration-200 ${active === link.href.slice(1) ? 'active' : ''}`}
+            >
               {link.label}
             </a>
           ))}
         </div>
-        <a href="mailto:emc.sioson@gmail.com" className="btn-primary px-4 py-2 rounded-lg text-sm font-semibold text-white">
+        <a href={`mailto:${EMAIL}`} className="btn-primary px-4 py-2 rounded-lg text-sm font-semibold text-white">
           Hire Me
         </a>
       </div>
@@ -217,54 +415,109 @@ function Nav() {
   )
 }
 
+/* ── Sections ───────────────────────────────────────── */
+const TERMINAL_LINES = [
+  { t: <><span className="text-cyan-400">$</span> whoami</> },
+  { t: <span className="text-slate-300">earl-sioson — senior devops &amp; cloud engineer</span> },
+  { t: <><span className="text-cyan-400">$</span> cat stack.txt</> },
+  { t: <span className="text-indigo-300">aws · azure · kubernetes · terraform</span> },
+  { t: <><span className="text-cyan-400">$</span> terraform apply --auto-approve</> },
+  { t: <span className="text-green-400">✓ multi-cloud infra provisioned</span> },
+  { t: <span className="text-green-400">✓ pipeline green · 0 downtime</span> },
+  { t: <><span className="text-cyan-400">$</span> <span className="cursor" /></> },
+]
+
 function Hero() {
   return (
-    <section id="hero" className="hero-bg min-h-screen flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/5 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-cyan-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }} />
-      </div>
-      <div className="relative z-10 max-w-4xl mx-auto fade-in">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium mb-8">
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          Open to Remote Opportunities · Manila, Philippines
-        </div>
-        <h1 className="text-6xl md:text-8xl font-black mb-4 leading-none tracking-tight">
-          <span className="gradient-text">Earl</span>{' '}
-          <span className="text-white">Sioson</span>
-        </h1>
-        <p className="text-2xl md:text-3xl font-bold text-slate-300 mb-6">
-          DevOps &amp; Cloud Engineer
-        </p>
-        <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-          7+ years designing, automating, and operating cloud-native infrastructure at enterprise scale —
-          AWS · Kubernetes · Terraform · CI/CD.
-        </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
-          <a href="#projects" className="btn-primary px-8 py-3.5 rounded-xl font-semibold text-white text-base">
-            View My Work
-          </a>
-          <a href="#contact" className="btn-secondary px-8 py-3.5 rounded-xl font-semibold text-white text-base">
-            Get In Touch
-          </a>
-        </div>
-        <div className="flex items-center justify-center gap-4 mt-10">
-          {[
-            { icon: <GithubIcon size={20} />, href: 'https://github.com/eaarrll', label: 'GitHub' },
-            { icon: <LinkedinIcon size={20} />, href: 'https://www.linkedin.com/in/earl-martin-sioson/', label: 'LinkedIn' },
-            { icon: <Mail size={20} />, href: 'mailto:emc.sioson@gmail.com', label: 'Email' },
-          ].map(s => (
-            <a key={s.label} href={s.href} aria-label={s.label}
-              className="p-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all duration-200">
-              {s.icon}
+    <section id="hero" className="min-h-screen flex items-start lg:items-center px-6 pt-28 pb-16 relative">
+      <div className="max-w-6xl mx-auto w-full grid lg:grid-cols-2 gap-12 lg:gap-10 items-center">
+        {/* Left — intro */}
+        <div className="fade-in text-center lg:text-left">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 text-indigo-300 text-sm font-medium mb-7">
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            Open to Relocation · Remote / Hybrid / On-site
+          </div>
+          <h1 className="text-5xl md:text-7xl font-black mb-4 leading-none tracking-tight">
+            <span className="gradient-text">Earl</span>{' '}
+            <span className="text-white">Sioson</span>
+          </h1>
+          <p className="text-2xl md:text-3xl font-bold text-slate-300 mb-5">
+            Senior DevOps &amp; <span className="gradient-text">Cloud</span> Engineer
+          </p>
+          <p className="text-slate-400 text-lg max-w-xl mx-auto lg:mx-0 mb-9 leading-relaxed">
+            7+ years building CI/CD pipelines and multi-cloud infrastructure that ship fast and stay up —
+            <span className="text-slate-200 font-medium"> AWS &amp; Azure · Kubernetes · Terraform · CI/CD</span>.
+          </p>
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
+            <a href="#lab" className="btn-primary px-8 py-3.5 rounded-xl font-semibold text-white text-base">
+              View My Work
             </a>
-          ))}
+            <a href="#contact" className="btn-secondary px-8 py-3.5 rounded-xl font-semibold text-white text-base">
+              Get In Touch
+            </a>
+          </div>
+          <div className="flex items-center justify-center lg:justify-start gap-4 mt-9">
+            {[
+              { icon: <GithubIcon size={20} />, href: GITHUB_URL, label: 'GitHub' },
+              { icon: <LinkedinIcon size={20} />, href: LINKEDIN_URL, label: 'LinkedIn' },
+              { icon: <Mail size={20} />, href: `mailto:${EMAIL}`, label: 'Email' },
+            ].map(s => (
+              <a
+                key={s.label}
+                href={s.href}
+                target={s.href.startsWith('http') ? '_blank' : undefined}
+                rel={s.href.startsWith('http') ? 'noreferrer' : undefined}
+                aria-label={s.label}
+                className="p-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all duration-200"
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Right — terminal */}
+        <div className="fade-in" style={{ animationDelay: '0.15s' }}>
+          <div className="terminal max-w-md mx-auto lg:ml-auto">
+            <div className="terminal-bar">
+              <span className="term-dot" style={{ background: '#ff5f57' }} />
+              <span className="term-dot" style={{ background: '#febc2e' }} />
+              <span className="term-dot" style={{ background: '#28c840' }} />
+              <span className="ml-2 text-xs text-slate-500 mono">earl@cloud — zsh</span>
+            </div>
+            <div className="terminal-body">
+              {TERMINAL_LINES.map((line, i) => (
+                <div key={i} className="term-line" style={{ animationDelay: `${0.5 + i * 0.45}s` }}>
+                  {line.t}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-      <a href="#about" className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-500 hover:text-slate-300 transition-colors animate-bounce">
+
+      <a href="#about" aria-label="Scroll to about" className="absolute bottom-8 left-1/2 -translate-x-1/2 text-slate-500 hover:text-slate-300 transition-colors animate-bounce">
         <ChevronDown size={24} />
       </a>
     </section>
+  )
+}
+
+function Marquee() {
+  const items = [...TECH_MARQUEE, ...TECH_MARQUEE]
+  return (
+    <div className="py-8 border-y border-white/5 bg-black/20">
+      <div className="marquee">
+        <div className="marquee-track">
+          {items.map((t, i) => (
+            <span key={i} className="marquee-item mono">
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -272,7 +525,7 @@ function About() {
   return (
     <section id="about" className="py-24 px-6">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-        <div>
+        <div className="reveal">
           <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">About Me</p>
           <h2 className="text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
             Engineering reliability<br />
@@ -280,30 +533,33 @@ function About() {
           </h2>
           <div className="space-y-4 text-slate-400 text-base leading-relaxed">
             <p>
-              Results-driven DevOps Engineer with 7+ years of experience designing, automating, and
-              operating cloud-native infrastructure at enterprise scale. Deep expertise across AWS services,
-              Kubernetes orchestration, and CI/CD pipeline automation using Terraform, Bicep, and GitHub Actions.
+              Senior DevOps &amp; Cloud Engineer with 7+ years designing, building, and maintaining CI/CD pipelines
+              and multi-cloud infrastructure that let teams ship quickly and reliably. Equally at home on
+              <span className="text-slate-200 font-medium"> AWS and Azure</span> — from EC2, Lambda, and EKS to AKS,
+              App Services, and Azure DevOps — with deep Terraform, Bicep, and Kubernetes experience.
             </p>
             <p>
-              Proven track record in incident response, root cause analysis, and maintaining high-availability
-              production systems. Experienced in distributed, remote-first environments — collaborating across
-              engineering and non-technical stakeholders to deliver mission-critical solutions securely and reliably.
+              I diagnose build and release failures fast, harden pipelines with secrets management and policy gates,
+              and keep developer productivity unblocked. Along the way I've led 24/7 incident response and mentored
+              25+ engineers into DevOps roles. Azure DevOps Engineer Expert (AZ-400) certified, with AWS Solutions
+              Architect in progress.
+            </p>
+            <p>
+              Off the clock, I ship <a href="#lab" className="text-indigo-300 hover:text-white underline underline-offset-4 decoration-indigo-500/40">side projects</a> —
+              from a live infra status dashboard to AI-powered Android apps solving everyday Filipino problems.
             </p>
             <p className="flex items-center gap-2 text-slate-500 text-sm">
-              <span className="text-indigo-400">📍</span> Manila, Philippines · Open to Remote
+              <MapPin size={15} className="text-indigo-400" /> Manila, Philippines · Open to Relocation, Hybrid &amp; Remote
             </p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          {[
-            { value: '7+', label: 'Years in Cloud & DevOps', icon: <Cloud size={20} /> },
-            { value: '150+', label: 'Apps Migrated to Kubernetes', icon: <Server size={20} /> },
-            { value: '50+', label: 'EC2 Instances Administered', icon: <Database size={20} /> },
-            { value: '3x', label: 'Microsoft Azure Certified', icon: <Award size={20} /> },
-          ].map(stat => (
-            <div key={stat.label} className="card-glow rounded-2xl p-6 text-center">
+          {STATS.map((stat, i) => (
+            <div key={stat.label} className="reveal card-glow rounded-2xl p-6 text-center" style={{ '--d': `${i * 0.08}s` }}>
               <div className="flex items-center justify-center mb-3 text-indigo-400">{stat.icon}</div>
-              <div className="text-3xl font-black gradient-text mb-1">{stat.value}</div>
+              <div className="text-3xl font-black gradient-text mb-1">
+                <Counter value={stat.value} suffix={stat.suffix} />
+              </div>
               <div className="text-slate-400 text-xs leading-tight">{stat.label}</div>
             </div>
           ))}
@@ -317,13 +573,13 @@ function Skills() {
   return (
     <section id="skills" className="py-24 px-6 bg-black/20">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 reveal">
           <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Tech Stack</p>
           <h2 className="text-4xl md:text-5xl font-black text-white section-heading">Skills &amp; Tools</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SKILLS.map(group => (
-            <div key={group.category} className="card-glow rounded-2xl p-6">
+          {SKILLS.map((group, i) => (
+            <div key={group.category} className="reveal card-glow rounded-2xl p-6" style={{ '--d': `${(i % 3) * 0.08}s` }}>
               <div className="flex items-center gap-3 mb-5">
                 <div className="p-2 rounded-lg bg-indigo-500/15 text-indigo-400">{group.icon}</div>
                 <h3 className="font-bold text-white text-sm">{group.category}</h3>
@@ -345,15 +601,16 @@ function Skills() {
 
 function Projects() {
   return (
-    <section id="projects" className="py-24 px-6">
+    <section id="work" className="py-24 px-6">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-16">
-          <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Portfolio</p>
-          <h2 className="text-4xl md:text-5xl font-black text-white section-heading">Featured Projects</h2>
+        <div className="text-center mb-16 reveal">
+          <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Selected Work</p>
+          <h2 className="text-4xl md:text-5xl font-black text-white section-heading">What I've Shipped</h2>
+          <p className="text-slate-400 mt-5 max-w-2xl mx-auto">Enterprise infrastructure and platform work delivered across six companies.</p>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PROJECTS.map(project => (
-            <div key={project.title} className="card-glow rounded-2xl p-6 flex flex-col group cursor-pointer">
+          {PROJECTS.map((project, i) => (
+            <div key={project.title} className="reveal card-glow rounded-2xl p-6 flex flex-col group" style={{ '--d': `${(i % 3) * 0.08}s` }}>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${project.color} flex items-center justify-center text-white mb-5 group-hover:scale-110 transition-transform duration-300`}>
                 {project.icon}
               </div>
@@ -374,11 +631,173 @@ function Projects() {
   )
 }
 
+function LiveLinks({ live, repo, compact }) {
+  return (
+    <div className="flex items-center gap-3">
+      {live && (
+        <a
+          href={live}
+          target="_blank"
+          rel="noreferrer"
+          className="btn-primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white"
+        >
+          Live Demo <ArrowUpRight size={15} />
+        </a>
+      )}
+      <a
+        href={repo}
+        target="_blank"
+        rel="noreferrer"
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border transition-all duration-200 ${
+          live
+            ? 'text-slate-300 border-white/10 hover:border-indigo-500/40 hover:text-white'
+            : 'text-slate-300 border-white/10 hover:border-indigo-500/40 hover:text-white'
+        }`}
+      >
+        <GithubIcon size={15} /> {compact ? 'Source' : 'View Source'}
+      </a>
+    </div>
+  )
+}
+
+function Lab() {
+  return (
+    <section id="lab" className="py-24 px-6 bg-black/20">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16 reveal">
+          <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3 inline-flex items-center gap-2 justify-center">
+            <Sparkles size={14} /> Personal Lab
+          </p>
+          <h2 className="text-4xl md:text-5xl font-black text-white section-heading">Things I Build for Fun</h2>
+          <p className="text-slate-400 mt-5 max-w-2xl mx-auto">
+            Nights-and-weekends projects from{' '}
+            <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="text-indigo-300 hover:text-white underline underline-offset-4 decoration-indigo-500/40">
+              github.com/eaarrll
+            </a>{' '}
+            — shipping real tools for real problems, often pairing Kotlin and Next.js with the Gemini API.
+          </p>
+        </div>
+
+        {/* Featured — Infra Status Dashboard */}
+        <div className="reveal card-glow card-ring rounded-3xl p-7 md:p-9 mb-6 grid lg:grid-cols-2 gap-8 items-center overflow-hidden">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold badge-live">
+                <span className="live-dot" /> Live
+              </span>
+              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                Featured · Web App
+              </span>
+            </div>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 flex items-center justify-center text-white">
+                <Gauge size={24} />
+              </div>
+              <h3 className="font-black text-white text-2xl">{LAB_FEATURED.title}</h3>
+            </div>
+            <p className="text-slate-400 leading-relaxed mb-5">{LAB_FEATURED.description}</p>
+            <div className="flex flex-wrap gap-2 mb-7">
+              {LAB_FEATURED.tags.map(tag => (
+                <span key={tag} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 border border-white/8 mono">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <LiveLinks live={LAB_FEATURED.live} repo={LAB_FEATURED.repo} />
+          </div>
+
+          {/* Faux status board preview */}
+          <div className="terminal">
+            <div className="browser-bar">
+              <span className="term-dot" style={{ background: '#ff5f57' }} />
+              <span className="term-dot" style={{ background: '#febc2e' }} />
+              <span className="term-dot" style={{ background: '#28c840' }} />
+              <span className="browser-url mono">infra-status-dashboard.vercel.app</span>
+            </div>
+            <div className="p-4 space-y-2.5">
+              {[
+                { name: 'Amazon Web Services', ok: true },
+                { name: 'GitHub', ok: true },
+                { name: 'Cloudflare', ok: false },
+                { name: 'Vercel', ok: true },
+                { name: 'Microsoft Azure', ok: true },
+              ].map(row => (
+                <div key={row.name} className="status-row">
+                  <span className="text-slate-300">{row.name}</span>
+                  <span className={`inline-flex items-center gap-1.5 font-semibold ${row.ok ? 'text-green-400' : 'text-amber-400'}`}>
+                    <span className="w-2 h-2 rounded-full" style={{ background: row.ok ? '#4ade80' : '#fbbf24' }} />
+                    {row.ok ? 'Operational' : 'Degraded'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Grid of the rest */}
+        <div className="grid md:grid-cols-2 gap-6">
+          {LAB.map((p, i) => (
+            <div key={p.title} className="reveal card-glow card-ring rounded-2xl flex flex-col group overflow-hidden" style={{ '--d': `${(i % 2) * 0.08}s` }}>
+              {p.web && (
+                <div className="browser-bar">
+                  <span className="term-dot" style={{ background: '#ff5f57' }} />
+                  <span className="term-dot" style={{ background: '#febc2e' }} />
+                  <span className="term-dot" style={{ background: '#28c840' }} />
+                  <span className="browser-url mono">{p.live.replace('https://', '')}</span>
+                </div>
+              )}
+              <div className="p-6 flex flex-col flex-1">
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${p.accent} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}>
+                    {p.icon}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {p.live && (
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold badge-live">
+                        <span className="live-dot" /> Live
+                      </span>
+                    )}
+                    <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-white/5 text-slate-400 border border-white/10">
+                      {p.kind}
+                    </span>
+                  </div>
+                </div>
+                <h3 className="font-bold text-white text-lg mb-2.5 leading-tight">{p.title}</h3>
+                <p className="text-slate-400 text-sm leading-relaxed mb-5 flex-1">{p.description}</p>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {p.tags.map(tag => (
+                    <span key={tag} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 border border-white/8 mono">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <LiveLinks live={p.live} repo={p.repo} compact />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12 reveal">
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-secondary inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-semibold text-white"
+          >
+            <FolderGit2 size={18} /> Browse all repositories on GitHub
+            <ExternalLink size={16} />
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Experience() {
   return (
-    <section id="experience" className="py-24 px-6 bg-black/20">
+    <section id="experience" className="py-24 px-6">
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 reveal">
           <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Career</p>
           <h2 className="text-4xl md:text-5xl font-black text-white section-heading">Experience</h2>
         </div>
@@ -386,7 +805,7 @@ function Experience() {
           <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-indigo-500 via-cyan-500 to-transparent" />
           <div className="space-y-8">
             {EXPERIENCE.map((exp, i) => (
-              <div key={i} className="pl-20 relative">
+              <div key={i} className="pl-20 relative reveal" style={{ '--d': `${Math.min(i, 3) * 0.05}s` }}>
                 <div className="timeline-dot absolute left-6 top-1.5 w-4 h-4 rounded-full -translate-x-1/2" />
                 <div className="card-glow rounded-2xl p-7">
                   <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
@@ -414,7 +833,7 @@ function Experience() {
         </div>
 
         {/* Education */}
-        <div className="mt-16">
+        <div className="mt-16 reveal">
           <h3 className="text-2xl font-black text-white mb-6 text-center">Education</h3>
           <div className="card-glow rounded-2xl p-6 flex items-center gap-5">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xl shrink-0">
@@ -429,15 +848,20 @@ function Experience() {
         </div>
 
         {/* Certifications */}
-        <div className="mt-10">
+        <div className="mt-10 reveal">
           <h3 className="text-2xl font-black text-white mb-6 text-center">Certifications</h3>
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {CERTS.map(cert => (
-              <div key={cert.code} className="card-glow rounded-2xl p-5 text-center">
+              <div key={cert.code} className="card-glow rounded-2xl p-5 text-center relative">
+                {cert.inProgress && (
+                  <span className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                    In Progress
+                  </span>
+                )}
                 <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br ${cert.color} text-white font-black text-sm mb-3`}>
                   {cert.code}
                 </div>
-                <p className="text-white font-semibold text-sm leading-tight">Microsoft Certified</p>
+                <p className="text-white font-semibold text-sm leading-tight">{cert.issuer}</p>
                 <p className="text-slate-400 text-xs mt-1">{cert.name}</p>
               </div>
             ))}
@@ -451,28 +875,31 @@ function Experience() {
 function Contact() {
   return (
     <section id="contact" className="py-24 px-6">
-      <div className="max-w-3xl mx-auto text-center">
+      <div className="max-w-3xl mx-auto text-center reveal">
         <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3">Contact</p>
         <h2 className="text-4xl md:text-5xl font-black text-white mb-6">
           Let's build something<br />
           <span className="gradient-text">remarkable together</span>
         </h2>
         <p className="text-slate-400 text-lg mb-10 leading-relaxed">
-          Open to senior DevOps, platform engineering, and cloud architecture roles — remote preferred.
-          Let's talk about how I can help your team ship faster and sleep better.
+          Open to senior DevOps, platform engineering, and cloud roles across AWS and Azure — happy to relocate,
+          or work hybrid or remote. Let's talk about how I can help your team ship faster and sleep better.
         </p>
-        <a href="mailto:emc.sioson@gmail.com"
+        <a href={`mailto:${EMAIL}`}
           className="btn-primary inline-flex items-center gap-3 px-10 py-4 rounded-xl font-semibold text-white text-lg mb-12">
           <Mail size={20} />
-          emc.sioson@gmail.com
+          {EMAIL}
         </a>
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex flex-wrap items-center justify-center gap-4">
           {[
-            { icon: <GithubIcon size={22} />, label: 'GitHub', href: 'https://github.com/eaarrll' },
-            { icon: <LinkedinIcon size={22} />, label: 'LinkedIn', href: 'https://www.linkedin.com/in/earl-martin-sioson/' },
-            { icon: <Mail size={22} />, label: 'Email', href: 'mailto:emc.sioson@gmail.com' },
+            { icon: <GithubIcon size={22} />, label: 'GitHub', href: GITHUB_URL },
+            { icon: <LinkedinIcon size={22} />, label: 'LinkedIn', href: LINKEDIN_URL },
+            { icon: <Mail size={22} />, label: 'Email', href: `mailto:${EMAIL}` },
           ].map(s => (
-            <a key={s.label} href={s.href} aria-label={s.label}
+            <a key={s.label} href={s.href}
+              target={s.href.startsWith('http') ? '_blank' : undefined}
+              rel={s.href.startsWith('http') ? 'noreferrer' : undefined}
+              aria-label={s.label}
               className="flex items-center gap-2 px-5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 border border-white/5 hover:border-indigo-500/30 transition-all duration-200 font-medium text-sm">
               {s.icon}
               {s.label}
@@ -488,23 +915,31 @@ function Footer() {
   return (
     <footer className="py-8 px-6 border-t border-white/5 text-center">
       <p className="text-slate-600 text-sm">
-        © {new Date().getFullYear()} Earl Martin Sioson · Manila, Philippines · Open to Remote
+        © {new Date().getFullYear()} Earl Martin Sioson · Manila, Philippines · Open to Relocation &amp; Remote
       </p>
+      <p className="text-slate-700 text-xs mt-2 mono">Built with React · Vite · Tailwind</p>
     </footer>
   )
 }
 
 export default function App() {
+  useScrollReveal()
   return (
-    <div className="min-h-screen">
-      <Nav />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Experience />
-      <Contact />
-      <Footer />
+    <div className="min-h-screen relative">
+      <Background />
+      <ScrollProgress />
+      <div className="relative z-10">
+        <Nav />
+        <Hero />
+        <Marquee />
+        <About />
+        <Skills />
+        <Projects />
+        <Lab />
+        <Experience />
+        <Contact />
+        <Footer />
+      </div>
     </div>
   )
 }

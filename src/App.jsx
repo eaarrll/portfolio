@@ -3,7 +3,7 @@ import {
   Cloud, GitBranch, Shield, Server, Activity, Mail, ChevronDown,
   Layers, Globe, Zap, Database, Sparkles, ExternalLink,
   ArrowUpRight, Radio, MapPin, Boxes, Gauge, FolderGit2,
-  Users, Workflow, Rocket,
+  Users, Workflow, Rocket, Bot, Siren, ListChecks, TrendingDown, Briefcase,
 } from 'lucide-react'
 
 const GITHUB_URL = 'https://github.com/eaarrll'
@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { label: 'About', href: '#about' },
   { label: 'Skills', href: '#skills' },
   { label: 'Work', href: '#work' },
+  { label: 'AI', href: '#ai' },
   { label: 'Lab', href: '#lab' },
   { label: 'Experience', href: '#experience' },
   { label: 'Contact', href: '#contact' },
@@ -160,6 +161,37 @@ const LAB = [
     tags: ['Android', 'Kotlin', 'Gemini API', 'OCR'],
     repo: 'https://github.com/eaarrll/BIR-discount-calculator',
     icon: <Boxes size={22} />,
+    accent: 'from-violet-500 to-indigo-500',
+  },
+]
+
+/* Custom Claude Code skills & AI automations Earl runs day to day */
+const AI_SKILLS = [
+  {
+    kind: 'Claude Code Skill',
+    title: 'Incident & Ops Comms Engine',
+    description:
+      'A custom Claude Code skill that drafts RCA write-ups, PR audit reports, release notes, and ticket-status summaries in my team’s established formats — verdict-first, evidence-before-recommendation, and never inventing facts.',
+    tags: ['Claude Code', 'RCA', 'Incident Response', 'PR Review'],
+    icon: <Siren size={22} />,
+    accent: 'from-rose-500 to-orange-500',
+  },
+  {
+    kind: 'Command Suite',
+    title: 'Release & Ticket Automation',
+    description:
+      'Nine custom commands that run my release workflow end to end — deploy-readiness checklists, ticket-status summaries, release checks, fix-version tagging, and Jira sync — turning a manual pre-deploy ritual into a single command.',
+    tags: ['Claude Code', 'Jira', 'Release Mgmt', 'Automation'],
+    icon: <ListChecks size={22} />,
+    accent: 'from-cyan-500 to-blue-500',
+  },
+  {
+    kind: 'Cost Engineering',
+    title: '60–90% Lower LLM Token Cost',
+    description:
+      'Instrumented my AI dev toolchain with RTK — a token-optimizing CLI proxy — to cut token consumption 60–90% on routine operations, with transparent command rewriting and per-command savings analytics.',
+    tags: ['RTK', 'Cost Optimization', 'LLM', 'FinOps'],
+    icon: <TrendingDown size={22} />,
     accent: 'from-violet-500 to-indigo-500',
   },
 ]
@@ -386,7 +418,7 @@ function ScrollProgress() {
 
 function Nav() {
   const [scrolled, setScrolled] = useState(false)
-  const active = useActiveSection(['about', 'skills', 'work', 'lab', 'experience', 'contact'])
+  const active = useActiveSection(['about', 'skills', 'work', 'ai', 'lab', 'experience', 'contact'])
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -446,7 +478,8 @@ function Hero() {
           </p>
           <p className="text-slate-400 text-lg max-w-xl mx-auto lg:mx-0 mb-9 leading-relaxed">
             7+ years building CI/CD pipelines and multi-cloud infrastructure that ship fast and stay up —
-            <span className="text-slate-200 font-medium"> AWS &amp; Azure · Kubernetes · Terraform · CI/CD</span>.
+            <span className="text-slate-200 font-medium"> AWS &amp; Azure · Kubernetes · Terraform</span>. Lately, I
+            automate the ops toolchain itself with custom <span className="text-slate-200 font-medium">AI agents &amp; Claude Code skills</span>.
           </p>
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
             <a href="#lab" className="btn-primary px-8 py-3.5 rounded-xl font-semibold text-white text-base">
@@ -540,9 +573,11 @@ function About() {
             </p>
             <p>
               I diagnose build and release failures fast, harden pipelines with secrets management and policy gates,
-              and keep developer productivity unblocked. Along the way I've led 24/7 incident response and mentored
-              25+ engineers into DevOps roles. Azure DevOps Engineer Expert (AZ-400) certified, with AWS Solutions
-              Architect in progress.
+              and keep developer productivity unblocked. Increasingly, I automate that work itself — building custom
+              <a href="#ai" className="text-indigo-300 hover:text-white underline underline-offset-4 decoration-indigo-500/40"> AI agents &amp; Claude Code skills</a> for
+              incident write-ups, release checks, and token-cost optimization. Along the way I've led 24/7 incident
+              response and mentored 25+ engineers into DevOps roles. Azure DevOps Engineer Expert (AZ-400) certified,
+              with AWS Solutions Architect in progress.
             </p>
             <p>
               Off the clock, I ship <a href="#lab" className="text-indigo-300 hover:text-white underline underline-offset-4 decoration-indigo-500/40">side projects</a> —
@@ -793,6 +828,83 @@ function Lab() {
   )
 }
 
+function AiAutomation() {
+  return (
+    <section id="ai" className="py-24 px-6">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16 reveal">
+          <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3 inline-flex items-center gap-2 justify-center">
+            <Bot size={14} /> AI Automation
+          </p>
+          <h2 className="text-4xl md:text-5xl font-black text-white section-heading">DevOps, Automated with AI</h2>
+          <p className="text-slate-400 mt-5 max-w-2xl mx-auto">
+            I don't just use AI tools — I build them into the workflow. These are the custom Claude Code skills and
+            automations I run day to day, plus the agentic delivery gates I shipped at Metagenics.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {AI_SKILLS.map((s, i) => (
+            <div key={s.title} className="reveal card-glow card-ring rounded-2xl p-6 flex flex-col group" style={{ '--d': `${i * 0.08}s` }}>
+              <div className="flex items-center justify-between mb-4">
+                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${s.accent} flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300`}>
+                  {s.icon}
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[11px] font-semibold bg-white/5 text-slate-400 border border-white/10">
+                  {s.kind}
+                </span>
+              </div>
+              <h3 className="font-bold text-white text-lg mb-2.5 leading-tight">{s.title}</h3>
+              <p className="text-slate-400 text-sm leading-relaxed mb-5 flex-1">{s.description}</p>
+              <div className="flex flex-wrap gap-2">
+                {s.tags.map(tag => (
+                  <span key={tag} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 text-slate-400 border border-white/8 mono">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+function Consulting() {
+  const services = ['Cloud & token-cost audits', 'Incident & release automation', 'CI/CD & platform engineering']
+  return (
+    <section id="consulting" className="px-6 pt-4 pb-10">
+      <div className="max-w-5xl mx-auto reveal">
+        <div className="card-glow card-ring rounded-3xl p-8 md:p-11 text-center">
+          <p className="text-indigo-400 font-semibold text-sm uppercase tracking-widest mb-3 inline-flex items-center gap-2 justify-center">
+            <Briefcase size={14} /> Consulting
+          </p>
+          <h2 className="text-3xl md:text-4xl font-black text-white mb-4 leading-tight">
+            Bring DevOps <span className="gradient-text">+ AI automation</span> to your team
+          </h2>
+          <p className="text-slate-400 max-w-2xl mx-auto mb-7 leading-relaxed">
+            I help engineering teams cut cloud and LLM costs, automate incident response and release workflows,
+            and ship faster on AWS &amp; Azure — available for advisory and project-based engagements.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2 mb-8">
+            {services.map(s => (
+              <span key={s} className="px-3 py-1.5 rounded-lg text-xs font-medium bg-indigo-500/10 text-indigo-200 border border-indigo-500/20">
+                {s}
+              </span>
+            ))}
+          </div>
+          <a
+            href="mailto:emc.sioson@gmail.com?subject=Consulting%20inquiry"
+            className="btn-primary inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl font-semibold text-white"
+          >
+            <Mail size={18} /> Book an intro call
+          </a>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Experience() {
   return (
     <section id="experience" className="py-24 px-6">
@@ -935,8 +1047,10 @@ export default function App() {
         <About />
         <Skills />
         <Projects />
+        <AiAutomation />
         <Lab />
         <Experience />
+        <Consulting />
         <Contact />
         <Footer />
       </div>

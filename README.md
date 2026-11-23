@@ -1,16 +1,30 @@
-# React + Vite
+# Portfolio: Earl Martin Sioson
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The source for my personal site. It covers my DevOps and cloud work, my experience, certifications and side projects.
 
-Currently, two official plugins are available:
+**Live:** https://portfolio-eaarrlls-projects.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+React 19 and Vite 8, styled with Tailwind CSS 4 and deployed on Vercel. Everything lives in one file and there's no backend.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Run it locally
 
-## Expanding the ESLint configuration
+```bash
+npm install
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Edit the content
+
+All the text is in data constants at the top of [`src/App.jsx`](src/App.jsx), so updating the site doesn't mean touching the layout:
+
+| Constant | Section |
+|---|---|
+| `SKILLS` | Skills grid |
+| `PROJECTS` | Selected work |
+| `LAB_FEATURED`, `LAB` | Side projects |
+| `AI_SKILLS` | AI automation |
+| `EXPERIENCE` | Work history |
+| `CERTS` | Certifications |
+| `STATS` | Headline numbers |

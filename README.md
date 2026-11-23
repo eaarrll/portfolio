@@ -2,7 +2,7 @@
 
 The source for my personal site. It covers my DevOps and cloud work, my experience, certifications and side projects.
 
-**Live:** https://portfolio-eaarrlls-projects.vercel.app
+**Live:** https://earl-sioson-devops-engineer.vercel.app
 
 ## Stack
 

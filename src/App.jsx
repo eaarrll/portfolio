@@ -149,6 +149,17 @@ const LAB = [
     accent: 'from-sky-500 to-indigo-500',
   },
   {
+    title: 'CI Triage Agent',
+    kind: 'GitHub Action',
+    description:
+      'When CI goes red, an AI agent reads the failed logs, the diff and the job history, then posts the root cause, the log lines that prove it, and the fix on the pull request. Reads cloud failures too (Terraform locks, IAM, Azure OIDC, OOM, ImagePullBackOff), redacts secrets first, and is scored against 17 recorded failures.',
+    tags: ['TypeScript', 'GitHub Actions', 'Claude API', 'AI Agents', 'Evals'],
+    live: 'https://github.com/eaarrll/ci-triage-agent-demo/pulls',
+    repo: 'https://github.com/eaarrll/ci-triage-agent',
+    icon: <Bot size={22} />,
+    accent: 'from-rose-500 to-orange-500',
+  },
+  {
     title: 'SRE-PH · Life Admin',
     kind: 'Web App',
     web: true,
